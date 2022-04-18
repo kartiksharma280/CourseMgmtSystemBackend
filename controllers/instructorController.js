@@ -101,7 +101,7 @@ exports.getInstructorCourses = async(req,res) => {
 
 //need to delete id from course too
 //impl transaction delete
-//CREATE AGAIN
+
 //create with role restriction to admin
 exports.deleteInstructor = async(req,res) => {
     const session = await mongoose.startSession();
