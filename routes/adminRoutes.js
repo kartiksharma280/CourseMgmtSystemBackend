@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const Admin = require("../models/Admin");
-const {checkId} = require("../utilities/Email/checkAdminEmail")
+const {checkId} = require("../utilities/Email/checkEmail")
 const {login,signup,protect,restrictTo} = require("../controllers/Auth/adminAuth")
 const {getAdminDetails,deleteAdmin,getAllAdmins,createAdmin,deleteStudent,updatePassword} = require("../controllers/adminController");
 
-/* DO -> only admin can create another admin */
+/* SIGNING IN NEEDS TO CHECK IN EACH OF THREE FOR EMAIL? */
+
 router.post("/createAdmin",protect,restrictTo("admin"),checkId,createAdmin);
 
 router.post("/login",login); //may change

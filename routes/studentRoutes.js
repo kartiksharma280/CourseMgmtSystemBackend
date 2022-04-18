@@ -1,7 +1,7 @@
 const express = require("express");
 const multer = require("multer")
 const router = express.Router();
-const {checkId} = require("../utilities/Email/checkStudentEmail")
+const {checkId} = require("../utilities/Email/checkEmail")
 const {signup, login ,protect,restrictTo} = require("../controllers/Auth/studentAuth")
 const {getStudent,getAllStudents,enrollInCourse,exitFromCourse,updatePassword,updateDetails,uploadUserPhoto} = require("../controllers/studentController")
 const {deleteStudent} = require("../controllers/adminController")

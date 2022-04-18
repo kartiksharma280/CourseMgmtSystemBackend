@@ -40,7 +40,7 @@ exports.login = async(req,res,next) => {
         })
     }
 
-    const admin = await Admin.findOne({adminEmail:email}).select('+adminPassword');
+    const admin = await Admin.findOne({email:email}).select('+adminPassword');
     //console.log(admin);
     if(!admin || !await admin.correctPassword(adminPassword,admin.adminPassword)){
         return res.status(401).json({ //401 -> unauthorised

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Instructor = require("../models/Instructor");
 const {deleteInstructor,getAllInstructors,getInstructorCourses,getInstructorDetails,createCourse,deleteCourse,checkInstructorExists,giveFeedback,deleteFeedback,updatePassword} = require("../controllers/instructorController")
-const {checkId} = require("../utilities/Email/checkInstructorEmail")
+const {checkId} = require("../utilities/Email/checkEmail")
 const {checkFeedbackGiven} = require("../utilities/feedbacks/checkFeedbackGiven")
 const {login,restrictTo,protect,signup} = require("../controllers/Auth/instructorAuth")
 

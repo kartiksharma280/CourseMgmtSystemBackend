@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-//description max 100
-//skill level 
 //no of lectures
 //creatification boolean
 
@@ -10,8 +8,17 @@ const courseSchema = new mongoose.Schema({
         type:String,
         required:[true,"Please provide a title!"]
     },
+    courseDescription:{
+        type:String,
+        maxlength:100,
+        minlength:20
+    },
     courseDuration:{
         type:String //CAN BE DATE
+    },
+    courseLevel:{
+        type:String, //set radio button in frontend,
+        required:[true,"Course level must be given!"]
     },
     courseCode:{
         type:String,
