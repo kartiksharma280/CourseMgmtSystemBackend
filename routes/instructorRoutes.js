@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Instructor = require("../models/Instructor");
-const {deleteInstructor,getAllInstructors,getInstructorCourses,getInstructorDetails,createCourse,deleteCourse,checkInstructorExists,giveFeedback,deleteFeedback} = require("../controllers/instructorController")
+const {deleteInstructor,getAllInstructors,getInstructorCourses,getInstructorDetails,createCourse,deleteCourse,checkInstructorExists,giveFeedback,deleteFeedback,updatePassword} = require("../controllers/instructorController")
 const {checkId} = require("../utilities/Email/checkInstructorEmail")
 const {checkFeedbackGiven} = require("../utilities/feedbacks/checkFeedbackGiven")
 const {login,restrictTo,protect,signup} = require("../controllers/Auth/instructorAuth")
@@ -22,13 +22,13 @@ router.get("/:instructorId",protect,getInstructorDetails);
 
 router.get("/:id/allCourses",checkInstructorExists,getInstructorCourses);
 
-/* INVALIDATE EMAIL AND PASSWORD INSTEAD OF DELETING */
-router.delete("/deleteUser/:id",protect,restrictTo("admin","instructor"), deleteInstructor);
+//router.delete("/deleteUser/:id",protect,restrictTo("admin","instructor"), deleteInstructor);
 
-router.delete("/course/:courseId",protect,restrictTo("instructor"),deleteCourse);
+//router.delete("/course/:courseId",protect,restrictTo("instructor"),deleteCourse);
 
 router.delete("/:courseId/feedback",protect,restrictTo("instructor"),deleteFeedback);
 
+router.patch("/updateDetails/password",protect,restrictTo("instructor",updatePassword))
 
 /* CHECK ROUTE AGAIN */
 router.patch("/updateDetails/:id", async(req,res) => {

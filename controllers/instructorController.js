@@ -1,7 +1,7 @@
 const Instructor = require("../models/Instructor");
 const Course = require("../models/Course")
 const mongoose = require("mongoose");
-const Feedback = require("../models/Feedback")
+const Feedback = require("../models/Feedback");
 
 exports.checkInstructorExists = async(req,res,next) => {
     try {
@@ -99,9 +99,36 @@ exports.getInstructorCourses = async(req,res) => {
     }
 }
 
+
+exports.updatePassword = async(req,res,next) => {
+    try {
+        const {currentPassword,newPassword,newPasswordConfirm} = req.body;
+        const instructor = await Instructor.findById(req.instructor._id).select('+instructorPassword');
+        if(!await instructor.correctPassword(currentPassword,instructor.instructorPassword)){
+            return res.status(401).json({
+                status:"fail",
+                message:"Current Password is incorrect!"
+            })
+        }
+        instructor.instructorPassword = newPassword;
+        instructor.passwordConfirm = newPasswordConfirm;
+        await instructor.save(); //runs validation again
+        const token = signToken(instructor._id);
+        return res.status(200).json({
+            status:"success",
+            token:token
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
+            status:"fail",
+            message:error
+        })
+    }
+}
+
 //need to delete id from course too
 //impl transaction delete
-
 //create with role restriction to admin
 exports.deleteInstructor = async(req,res) => {
     const session = await mongoose.startSession();

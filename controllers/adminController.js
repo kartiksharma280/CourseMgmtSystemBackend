@@ -41,10 +41,11 @@ exports.deleteStudent = async(req,res,next) => {
     const session = await mongoose.startSession();
     try {
         session.startTransaction();
-        const {student} = req;
-        await Feedback.findByIdAndDelete(student._id,{feedbackTo:student._id}).session(session);
-        const freshFeedbacks = await Feedback.find();
-        //console.log(freshFeedbacks);
+        const {studentId} = req.body;
+        await Course.
+        /* check feedbacks need to be deleted? */
+        /* exit student from courses */
+
         session.commitTransaction();
         return res.status(204).json({
             status:"success",
@@ -88,6 +89,33 @@ exports.getAllAdmins = async(req,res) => {
         })
     } catch (error) {
         res.status(404).json({
+            status:"fail",
+            message:error
+        })
+    }
+}
+
+exports.updatePassword = async(req,res,next) => {
+    try {
+        const {currentPassword,newPassword,newPasswordConfirm} = req.body;
+        const admin = await Admin.findById(req.admin._id).select('+adminPassword');
+        if(!await Admin.correctPassword(currentPassword,admin.adminPassword)){
+            return res.status(401).json({
+                status:"fail",
+                message:"Current Password is incorrect!"
+            })
+        }
+        admin.adminPassword = newPassword;
+        admin.passwordConfirm = newPasswordConfirm;
+        await admin.save(); //runs validation again
+        const token = signToken(admin._id);
+        return res.status(200).json({
+            status:"success",
+            token:token
+        })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({
             status:"fail",
             message:error
         })
