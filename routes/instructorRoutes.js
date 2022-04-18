@@ -29,6 +29,7 @@ router.delete("/course/:courseId",protect,restrictTo("instructor"),deleteCourse)
 
 router.delete("/:courseId/feedback",protect,restrictTo("instructor"),deleteFeedback);
 
+
 /* CHECK ROUTE AGAIN */
 router.patch("/updateDetails/:id", async(req,res) => {
     try {
