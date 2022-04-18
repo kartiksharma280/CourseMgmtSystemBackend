@@ -13,7 +13,8 @@ router.post("/login",login);
 router.post("/createCourse",protect,restrictTo("instructor"),createCourse);
 
 /* get feedbacks by instructorId specific */
-router.post("/:studentId/feedback",protect,restrictTo("instructor"), checkFeedbackGiven,giveFeedback);
+router.post("/:courseId/feedback",protect,restrictTo("instructor"), checkFeedbackGiven,giveFeedback);
+
 
 router.get("/allUsers",getAllInstructors);
 
@@ -26,7 +27,7 @@ router.delete("/deleteUser/:id",protect,restrictTo("admin","instructor"), delete
 
 router.delete("/course/:courseId",protect,restrictTo("instructor"),deleteCourse);
 
-router.delete("/:studentId/feedback",protect,restrictTo("instructor"),deleteFeedback);
+router.delete("/:courseId/feedback",protect,restrictTo("instructor"),deleteFeedback);
 
 /* CHECK ROUTE AGAIN */
 router.patch("/updateDetails/:id", async(req,res) => {

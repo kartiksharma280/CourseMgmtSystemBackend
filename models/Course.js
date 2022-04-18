@@ -1,5 +1,10 @@
 const mongoose = require("mongoose");
 
+//description max 100
+//skill level 
+//no of lectures
+//creatification boolean
+
 const courseSchema = new mongoose.Schema({
     courseTitle:{
         type:String,
@@ -23,6 +28,10 @@ const courseSchema = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Instructor"
     },
+    studentFeedbacks:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Feedback"
+    }],
     enrolledStudents:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Student"

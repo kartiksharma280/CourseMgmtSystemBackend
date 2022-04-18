@@ -20,7 +20,8 @@ const instructorSchema = new mongoose.Schema({
     },
     instructorPassword:{
         type:String,
-        required:[true,"Please provide a password!"]
+        required:[true,"Please provide a password!"],
+        select:false
     },
     passwordConfirm:{
         type:String,

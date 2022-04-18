@@ -102,6 +102,7 @@ exports.getInstructorCourses = async(req,res) => {
 //need to delete id from course too
 //impl transaction delete
 //CREATE AGAIN
+//create with role restriction to admin
 exports.deleteInstructor = async(req,res) => {
     const session = await mongoose.startSession();
     try {
@@ -126,6 +127,7 @@ exports.deleteInstructor = async(req,res) => {
 
 //need to delete course from instructor too
 //impl transaction delete
+//create with role restriction to admin
 exports.deleteCourse = async(req,res) => {
     try {
         const {courseId} = req.params;
@@ -146,33 +148,44 @@ exports.giveFeedback = async(req,res,next) =>{
     const session = await mongoose.startSession();
     try {
         session.startTransaction();
+        const {courseId} = req.params;
         const {instructor} = req;
-        const {feedbackMessage} = req.body;
+        const {feedbackMessage,studentId} = req.body;
+        const course = await Course.find({$and:[{_id:courseId},{enrolledStudents:{$elemMatch:{$eq:studentId}}},{instructorId:instructor._id}]});
+        console.log(course);
+        if(course.length===0){
+            return res.status(404).json({
+                status:'fail',
+                message:"Student / Instructor doesn't exist!"
+            })
+        }
+
         if(feedbackMessage===""){
             return res.status(400).json({
                 status:"fail",
                 message:"Please enter a valid feedback!"
             })
         }
+
         const feedbackObj ={
-            ...req.body,
+            feedbackMessage:feedbackMessage,
             feedBackDate:Date.now(),
-            FeedbackTo:req.params.studentId,
+            FeedbackTo:studentId,
             FeedbackBy:instructor._id
         }
-        //console.log(typeof(req.params.studentId),typeof(instructor._id) )
-        const feedback = await Feedback.create(feedbackObj);
-        //await Instructor.findByIdAndUpdate(instructor._id,{$push:{feedBacksGiven:feedback._id}},{new:true}).session(session);
+        const newFeedback = await Feedback.create(feedbackObj);
+        await Course.findByIdAndUpdate(courseId,{$push:{studentFeedbacks:newFeedback._id}},{new:true}).session(session);
         session.commitTransaction();
         return res.status(200).json({
             status:"success",
             data:{
-                feedback
+                newFeedback
             }
         })
 
     } catch (error) {
         session.abortTransaction();
+        console.log(error);
         return res.status(404).json({
             message:error
         })
@@ -182,8 +195,8 @@ exports.giveFeedback = async(req,res,next) =>{
 exports.deleteFeedback = async(req,res) => {
     try {
         const {instructor} = req;
-        const studentId = req.params;
-        await Feedback.findOneAndDelete({$and:[{studentId:studentId},{instructorId:instructor._id}]});
+        const {studentId} = req.body;
+        await Feedback.findOneAndDelete({$and:[{FeedbackTo:studentId},{FeedbackBy:instructor._id}]});
         return res.status(204).json({
             success:"true",
             data:null
@@ -196,30 +209,3 @@ exports.deleteFeedback = async(req,res) => {
         })
     }
 }
-
-/* 
-
-    const {instructor} = req;
-    const {feedbackMessage} = req.body;
-    if(feedbackMessage===""){
-        return res.status(400).json({
-            status:"fail",
-            message:"Please enter a valid feedback!"
-        })
-    }
-    //console.log(feedbackMessage)
-    //make it transaction and add feedbackId to instructor as well as student
-    const feedbackObj ={
-        ...req.body,
-        feedBackDate:Date.now(),
-        studentId:req.params.studentId,
-        instructorId:instructor._id
-    }
-    const feedback = await Feedback.create(feedbackObj);
-    return res.status(200).json({
-        status:"success",
-        data:{
-            feedback
-        }
-    })
-*/

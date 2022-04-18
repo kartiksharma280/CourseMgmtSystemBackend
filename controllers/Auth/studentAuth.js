@@ -17,7 +17,7 @@ exports.signup = async(req,res,next) => {
         const token = signToken(newStudent._id)
         return res.status(201).json({
             status:"success",
-            token:token,
+           // token:token,
             data:{
                 student:newStudent
             }
