@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator")
 const bcrypt = require("bcryptjs");
 
-/* ADD INSTR TO COURSES ONE TO MANY MAPPING */
+
 const instructorSchema = new mongoose.Schema({
     email:{
         type:String,

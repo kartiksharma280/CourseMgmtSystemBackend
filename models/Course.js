@@ -20,6 +20,12 @@ const courseSchema = new mongoose.Schema({
         type:String, //set radio button in frontend,
         required:[true,"Course level must be given!"]
     },
+    courseDescription:{
+        type:String,
+        maxlength:100,
+        minlength:20,
+        required:[true,"Please provide a suitable description of 20-100 words!"]
+    },
     courseCode:{
         type:String,
         required:[true,"Please provide a course code"]

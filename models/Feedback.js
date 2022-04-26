@@ -9,11 +9,17 @@ const feedbackSchema = new mongoose.Schema({
     feedBackDate:{
         type:Date
     },
+    courseName:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Course"
+    },
     FeedbackTo:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Student"
     },
     FeedbackBy:{
-        type:String
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Instructor"
     }
 })
 

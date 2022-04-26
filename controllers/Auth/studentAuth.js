@@ -23,6 +23,7 @@ exports.signup = async(req,res,next) => {
             }
         })
     } catch (error) {
+        console.log(error.message)
         return res.status(404).json({
             status:"fail",
             message:error
@@ -44,28 +45,35 @@ exports.login = async(req,res,next) => {
     if(!student || !await student.correctPassword(studentPassword,student.studentPassword)){
         return res.status(401).json({ //401 -> unauthorised
             status:"fail",
-            message:"Invalid user / password"
+            message:"Invalid email / password"
         })
     }
 
     const token = signToken(student._id);
+    const resStudent = await Student.findById(student._id).populate(["enrolledInCourses","feedBacksRecieved"]);
+    //same name overwrites the cookie
+    console.log(token)
+    res.cookie("jwt",token,{
+        maxAge:86400000,
+        //secure:true, //will send only on https req
+        httpOnly:true, //cookie cannot be modified by browser
+        //sameSite:"none"
+    });
+    
     res.status(200).json({
         status:"success",
-        token:token
+        data:{
+            user:resStudent
+        }
     })
 }
 
 exports.protect = async(req,res,next) => {
     try {
-        let token;
         let payload;
         let student;
-        //console.log(req.headers);
-        if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
-            token = req.headers.authorization.split(" ")[1];
-            //console.log(token);
-            
-        }
+        
+        const token = req.cookies.jwt;
         
         if(!token){
             return res.status(401).json({ //unauthorised
@@ -78,6 +86,7 @@ exports.protect = async(req,res,next) => {
             payload = await promisify(jwt.verify)(token , process.env.JWT_SECRET);
             /* console.log(payload); */
         } catch (error) {
+            console.log(error)
             return res.status(401).json({
                 status:"fail",
                 message:"Invalid / Expired token!"

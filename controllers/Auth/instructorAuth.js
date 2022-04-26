@@ -48,25 +48,26 @@ exports.login = async(req,res,next) => {
             message:"Invalid user / password"
         })
     }
-
+    const resInstructor = await Instructor.findById(instructor._id).populate(["feedBacksGiven","coursesAssigned"])
     const token = signToken(instructor._id);
+    res.cookie("jwt",token,{
+        maxAge:86400000,
+        //secure:true, //will send only on https req
+        httpOnly:true, //cookie cannot be modified by browser
+        //sameSite:"none"
+    });
     res.status(200).json({
         status:"success",
-        token:token
+        user:resInstructor
     })
 }
 
 exports.protect = async(req,res,next) => {
     try {
-        let token;
+        
         let payload;
         let instructor;
-        //console.log(req.headers);
-        if(req.headers.authorization && req.headers.authorization.startsWith("Bearer")){
-            token = req.headers.authorization.split(" ")[1];
-            //console.log(token);
-            
-        }
+        const token = req.cookies.jwt;
         
         if(!token){
             return res.status(401).json({ //unauthorised

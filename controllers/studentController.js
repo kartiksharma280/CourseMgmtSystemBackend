@@ -39,11 +39,14 @@ exports.uploadUserPhoto = upload.single('photo');
 exports.getStudent = async(req,res,next) => {
     try {
         const {student} = req;
+        const resStudent =  await Student.findById(student._id).populate("enrolledInCourses");
+        //console.log(resStudent);
         return res.status(200).json({
             status:"success",
-            student
+            resStudent
         })
     } catch (error) {
+        console.log(error)
         return res.status(404).json({
             status:"fail",
             message:error
@@ -147,29 +150,6 @@ exports.updateDetails = async(req,res) => {
     }
 }
 
-/* 
-    , async(req,res) => {
-    try {
-        const {id,body} = req.params;
-        const updatedDetails = await Student.findByIdAndUpdate(id,body, {
-            new:true,
-            runValidators:true
-        })
-        res.status(200).json({
-            status:"success",
-            data:{
-                details:updatedDetails
-            }
-        })
-    } catch (error) {
-        res.status(404).json({
-            status:"fail",
-            message:error
-        })
-    }
-}
-*/
-
 /* check whether isEnrolled first or not */
 exports.enrollInCourse = async(req,res) => {
     const session = await mongoose.startSession();
@@ -220,4 +200,16 @@ exports.exitFromCourse = async(req,res) => {
         })
     }
 
+}
+
+exports.logout = async(req,res,next) => {
+    const token = req.cookies;
+    //console.log(token);
+    res.clearCookie("jwt",{
+        maxAge:86400000,
+        httpOnly:true, //cookie cannot be modified by browser
+    });
+    res.status(200).json({
+        status:"success"
+    })
 }

@@ -22,7 +22,7 @@ const Instructor = require("../models/Instructor");
 
 router.get("/allCourses",async(req,res) => {
     try {
-        const allCourses = await Course.find();
+        const allCourses = await Course.find().populate(["enrolledStudents","instructorId"]);
         res.status(200).json({
             status:"success",
             data:{

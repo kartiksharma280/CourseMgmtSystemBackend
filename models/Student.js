@@ -63,6 +63,10 @@ const studentSchema = new mongoose.Schema({
     enrolledInCourses:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Course"
+    }],
+    feedBacksRecieved:[{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"Feedback"
     }]
 })
 

@@ -2,6 +2,7 @@ const Instructor = require("../models/Instructor");
 const Course = require("../models/Course")
 const mongoose = require("mongoose");
 const Feedback = require("../models/Feedback");
+const Student = require("../models/Student")
 
 exports.checkInstructorExists = async(req,res,next) => {
     try {
@@ -179,7 +180,8 @@ exports.giveFeedback = async(req,res,next) =>{
         const {instructor} = req;
         const {feedbackMessage,studentId} = req.body;
         const course = await Course.find({$and:[{_id:courseId},{enrolledStudents:{$elemMatch:{$eq:studentId}}},{instructorId:instructor._id}]});
-        console.log(course);
+        
+        //console.log(course);
         if(course.length===0){
             return res.status(404).json({
                 status:'fail',
@@ -197,11 +199,13 @@ exports.giveFeedback = async(req,res,next) =>{
         const feedbackObj ={
             feedbackMessage:feedbackMessage,
             feedBackDate:Date.now(),
+            courseName:course._id,
             FeedbackTo:studentId,
             FeedbackBy:instructor._id
         }
         const newFeedback = await Feedback.create(feedbackObj);
         await Course.findByIdAndUpdate(courseId,{$push:{studentFeedbacks:newFeedback._id}},{new:true}).session(session);
+        const updatedStudent = await Student.findByIdAndUpdate(studentId,{$push:{feedBacksRecieved:newFeedback._id}},{new:true}).session(session);
         session.commitTransaction();
         return res.status(200).json({
             status:"success",
