@@ -3,17 +3,17 @@ const multer = require("multer")
 const router = express.Router();
 const {checkId} = require("../utilities/Email/checkEmail")
 const {signup, login ,protect,restrictTo} = require("../controllers/Auth/studentAuth")
-const {getStudent,getAllStudents,enrollInCourse,exitFromCourse,updatePassword,updateDetails,uploadUserPhoto} = require("../controllers/studentController")
+const {getStudent,getAllStudents,enrollInCourse,exitFromCourse,updatePassword,updateDetails,uploadUserPhoto,logout} = require("../controllers/studentController")
 const {deleteStudent} = require("../controllers/adminController")
 
 /* using auth/studentAuth */
 router.post("/signup",checkId,signup);
-router.post("/login",login)
+router.post("/login",login);
 
 router.get("/allUsers",getAllStudents)
 
 
-router.get("/:studentId",protect,getStudent)
+router.get("/",protect,restrictTo("student"),getStudent)
 
 /* add auth using roles so only admin can delete acc of student */
 /* need to check active on login always */
@@ -30,7 +30,9 @@ router.patch("/updateDetails/password",protect,restrictTo("student"), updatePass
 
 /* should be admin only?? */
 //check again
-router.patch("/updateDetails",protect,restrictTo("student"),updateDetails)
+router.patch("/updateDetails",protect,restrictTo("student"),updateDetails);
+
+router.delete("/logout",logout);
 
 
 
